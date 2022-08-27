@@ -6,6 +6,8 @@ open System.Collections.Generic
 
 type VideoProcessor(path: string) = 
 
+    static let videoExtensions = [".AVI"; ".MPEG"; ".MP4"; ".FLV"]
+
     let startProcess(command: string) = 
         use proc = new Process()
         let pi = ProcessStartInfo path
@@ -26,8 +28,16 @@ type VideoProcessor(path: string) =
             proc.WaitForExit()
             proc.ExitCode
 
+    static member isVideo(file: FileInfo) = 
+        List.contains (file.Extension.ToUpper()) videoExtensions
+
     member this.videoFromFrames(framerate: int, namePattern: string, resultName: string) = 
         printfn "Creating video from frames w/:\n\tframerate:%d\n\tsaved to:%s" framerate resultName
         let exitCode = startProcess(sprintf $"-r {framerate} -i {namePattern} {resultName}")
+        if exitCode <> 0 then failwith "Failed to run ffmpeg"
+
+    member this.framesFromVideo(fromPath: string, resultNamesPattern: string) = 
+        printfn "Creating frames from video w/:\n\tfrom:%s\n\tsaved to:%s" fromPath resultNamesPattern
+        let exitCode = startProcess(sprintf $"-i {fromPath} {resultNamesPattern}")
         if exitCode <> 0 then failwith "Failed to run ffmpeg"
         

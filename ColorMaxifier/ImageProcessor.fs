@@ -1,9 +1,12 @@
 ﻿module ImageProcessor
 open System.Drawing
+open System.Collections.Generic
+open System.IO
 
 type ImageProcessor(image: Bitmap, minColorValue: int, maxColorValue: int, minRedValue: int, maxRedValue: int, minGreenValue: int, maxGreenValue: int, minBlueValue: int, maxBlueValue: int, minColor: Color, maxColor: Color) = 
     do printfn "Creating image w/: \n\tminColorValue: %d\n\tmaxColorValue: %d\n\tminRedValue: %d\n\tmaxRedValue: %d\n\tminGreenValue: %d\n\tmaxGreenValue: %d\n\tminBlueValue: %d\n\tmaxBlueValue: %d\n\tminColor: %s\n\tmaxColor: %s" minColorValue maxColorValue minRedValue maxRedValue minGreenValue maxGreenValue minBlueValue maxBlueValue (minColor.ToString()) (maxColor.ToString())
     let innerImage = image
+    static let imageExtensions = [".JPG"; ".JPEG"; ".JPE"; ".BMP"; ".GIF"; ".PNG"]
     
     let getMeanColor() =
         let pixelCount = innerImage.Height * innerImage.Width
@@ -78,6 +81,9 @@ type ImageProcessor(image: Bitmap, minColorValue: int, maxColorValue: int, minRe
                         ((pixel.B |> int32) + minBlueValue) % 256))
 
         resultImage.Save(filename)
+
+    static member isImage(file: FileInfo) = 
+        List.contains (file.Extension.ToUpper()) imageExtensions
 
     new(image: Bitmap, minColorValue: int, maxColorValue: int) = ImageProcessor(image, minColorValue, maxColorValue, 0, 256, 0, 256, 0, 256, Color.Black, Color.White)
     new(image: Bitmap, minColor: Color, maxColor: Color) = ImageProcessor(image, 0, 256, 0, 256, 0, 256, 0, 256, minColor, maxColor)
