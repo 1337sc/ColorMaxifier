@@ -8,6 +8,6 @@ all ImageProcessor functions work related to mean colors found for single images
 - **saveAddedToEachColor**: add **min** or **max** value to the corresponding Red, Green and Blue values of the colour of each pixels
 
 # VideoProcessor
-used for creating videos from frames and vice versa (WIP)
+used for creating videos from frames and vice versa 
 - **videoFromFrames**: create video from frames, supports regexp patterns
-- **framesFromVideo**: extract frames from video (WIP)
+- **framesFromVideo**: extract frames from video
