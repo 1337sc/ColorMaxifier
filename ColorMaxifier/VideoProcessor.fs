@@ -40,4 +40,14 @@ type VideoProcessor(path: string) =
         printfn "Creating frames from video w/:\n\tfrom:%s\n\tsaved to:%s" fromPath resultNamesPattern
         let exitCode = startProcess(sprintf $"-i {fromPath} {resultNamesPattern}")
         if exitCode <> 0 then failwith "Failed to run ffmpeg"
+
+    member this.extractAudioFromVideo(fromPath: string, resultName: string) = 
+        printfn "Extracting audio from %s, saving to %s" fromPath resultName
+        let exitCode = startProcess(sprintf $"-i {fromPath} -map 0:a -acodec copy {resultName}")
+        if exitCode <> 0 then failwith "Failed to run ffmpeg"
+
+    member this.copyAudioIntoVideo(videoPath: string, audioPath: string, resultPath: string) = 
+        printfn "Merging audio from %s into %s" audioPath videoPath
+        let exitCode = startProcess(sprintf $"-i {videoPath} -i {audioPath} -c copy {resultPath}")
+        if exitCode <> 0 then failwith "Failed to run ffmpeg"
         
