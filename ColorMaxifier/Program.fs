@@ -60,28 +60,27 @@ let processVideo(f: FileInfo) =
     videoProcessor.extractAudioFromVideo(f.FullName, audioPath)
     videoProcessor.framesFromVideo(f.FullName, Path.GetFullPath(Path.Combine(outputFolder, fName + "%05d" + generatedFrameExtension)))
     let frames = outputDirectory.GetFiles(fName + "*" + generatedFrameExtension)
-    let mutable meanTime = 0
+    let mutable meanTime = 0: float
+    let startedProcessingAt = DateTime.UtcNow
     for c in 0..frames.Length - 1 do
         let frame = frames[c]
         task {
+            printfn "\n\t\t\t#%d/%d" c frames.Length
             let timeStart = DateTime.UtcNow
-            let imageProcessor = new ImageProcessor(new Bitmap(Bitmap.FromFile(frame.FullName)), 
-                56, 
-                142,
-                67,
-                153,
-                78,
-                164)
+            let imageProcessor = new ImageProcessor(new Bitmap(Bitmap.FromFile(frame.FullName)),
+                -100,
+                44)
             let newFilePath = Path.GetFullPath(Path.Combine(outputFolder, 
                 fName + "worked_" + c.ToString().PadLeft(5, '0') + generatedFrameExtension))
-            imageProcessor.saveAddedToEachColor(newFilePath)
+            imageProcessor.saveAddedByMeanColor(newFilePath)
             let timePassed = DateTime.UtcNow - timeStart
-            meanTime <- meanTime + timePassed.Milliseconds
+            meanTime <- meanTime + timePassed.TotalMilliseconds
         }
         |> Async.AwaitTask
         |> ignore
     
-    printfn "Mean time processing frames: %d ms" (meanTime / frames.Length)
+    printfn "Total time processing frames: %f s" (DateTime.UtcNow - startedProcessingAt).TotalSeconds
+    printfn "Mean time processing frames: %f ms" (meanTime / (frames.Length |> float))
 
     let resultVideoPath = fName + "worked_%05d" + generatedFrameExtension
     let result = createVideoFromFrames(fName, resultVideoPath)

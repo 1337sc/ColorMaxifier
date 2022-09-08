@@ -6,6 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="MathHelpers.fs" />
     <Compile Include="VideoProcessor.fs" />
     <Compile Include="ImageProcessor.fs" />
     <Compile Include="Program.fs" />

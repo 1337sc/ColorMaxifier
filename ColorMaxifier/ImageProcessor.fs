@@ -2,6 +2,8 @@
 open System.Drawing
 open System.Collections.Generic
 open System.IO
+open System
+open MathHelpers
 
 type ImageProcessor(image: Bitmap, minColorValue: int, maxColorValue: int, minRedValue: int, maxRedValue: int, minGreenValue: int, maxGreenValue: int, minBlueValue: int, maxBlueValue: int, minColor: Color, maxColor: Color) = 
     do printfn "Creating image w/: \n\tminColorValue: %d\n\tmaxColorValue: %d\n\tminRedValue: %d\n\tmaxRedValue: %d\n\tminGreenValue: %d\n\tmaxGreenValue: %d\n\tminBlueValue: %d\n\tmaxBlueValue: %d\n\tminColor: %s\n\tmaxColor: %s" minColorValue maxColorValue minRedValue maxRedValue minGreenValue maxGreenValue minBlueValue maxBlueValue (minColor.ToString()) (maxColor.ToString())
@@ -51,14 +53,14 @@ type ImageProcessor(image: Bitmap, minColorValue: int, maxColorValue: int, minRe
                 let pixel = innerImage.GetPixel(i, j)
                 if isColorBrighter(pixel, meanColor) then 
                     resultImage.SetPixel(i, j, Color.FromArgb(pixel.A |> int32, 
-                        ((pixel.R |> int32) + maxColorValue) % 256, 
-                        ((pixel.G |> int32) + maxColorValue) % 256, 
-                        ((pixel.B |> int32) + maxColorValue) % 256))
+                        ((pixel.R |> int32) + maxColorValue) % 256 |> MathHelpers.cutOffNegative, 
+                        ((pixel.G |> int32) + maxColorValue) % 256 |> MathHelpers.cutOffNegative, 
+                        ((pixel.B |> int32) + maxColorValue) % 256 |> MathHelpers.cutOffNegative))
                 else
                     resultImage.SetPixel(i, j, Color.FromArgb(pixel.A |> int32, 
-                        ((pixel.R |> int32) + minColorValue) % 256, 
-                        ((pixel.G |> int32) + minColorValue) % 256, 
-                        ((pixel.B |> int32) + minColorValue) % 256))
+                        ((pixel.R |> int32) + minColorValue) % 256 |> MathHelpers.cutOffNegative, 
+                        ((pixel.G |> int32) + minColorValue) % 256 |> MathHelpers.cutOffNegative, 
+                        ((pixel.B |> int32) + minColorValue) % 256 |> MathHelpers.cutOffNegative))
 
         resultImage.Save(filename)
     
@@ -71,14 +73,14 @@ type ImageProcessor(image: Bitmap, minColorValue: int, maxColorValue: int, minRe
                 let pixel = innerImage.GetPixel(i, j)
                 if isColorBrighter(pixel, meanColor) then 
                     resultImage.SetPixel(i, j, Color.FromArgb(pixel.A |> int32, 
-                        ((pixel.R |> int32) + maxRedValue) % 256, 
-                        ((pixel.G |> int32) + maxGreenValue) % 256, 
-                        ((pixel.B |> int32) + maxBlueValue) % 256))
+                        ((pixel.R |> int32) + maxRedValue)  % 256 |> MathHelpers.cutOffNegative, 
+                        ((pixel.G |> int32) + maxGreenValue) % 256 |> MathHelpers.cutOffNegative, 
+                        ((pixel.B |> int32) + maxBlueValue) % 256 |> MathHelpers.cutOffNegative))
                 else
                     resultImage.SetPixel(i, j, Color.FromArgb(pixel.A |> int32, 
-                        ((pixel.R |> int32) + minRedValue) % 256, 
-                        ((pixel.G |> int32) + minGreenValue) % 256, 
-                        ((pixel.B |> int32) + minBlueValue) % 256))
+                        ((pixel.R |> int32) + minRedValue) % 256 |> MathHelpers.cutOffNegative, 
+                        ((pixel.G |> int32) + minGreenValue) % 256 |> MathHelpers.cutOffNegative, 
+                        ((pixel.B |> int32) + minBlueValue) % 256 |> MathHelpers.cutOffNegative))
 
         resultImage.Save(filename)
 
